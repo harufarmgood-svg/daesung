@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>🍊 슈슈 과일 계산기</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #FFF9F2;
+      --card: #FFFFFF;
+      --text: #2A221B;
+      --muted: #84766A;
+      --accent: #FF7A2F;
+      --accent-soft: #FFF0E3;
+      --yellow: #FFE69A;
+      --green: #21884C;
+      --green-soft: #E9F8EE;
+      --border: #F0E3D5;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #F4EAE0;
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+    }
+    .app {
+      width: 100%;
+      max-width: 430px;
+      min-height: 100vh;
+      background: var(--bg);
+      padding: 20px 16px 40px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .logo {
+      display: inline-block;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 23px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+    }
+    .header p {
+      margin: 6px 0 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* Smart Input */
+    .box {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 24px;
+      padding: 16px;
+      box-shadow: 0 10px 26px rgba(255, 122, 47, 0.08);
+      margin-bottom: 14px;
+    }
+    textarea {
+      width: 100%;
+      border: none;
+      outline: none;
+      resize: none;
+      font-family: inherit;
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 1.5;
+      color: var(--text);
+      background: transparent;
+      min-height: 74px;
+    }
+    textarea::placeholder { color: #B8AAA0; font-weight: 600; }
+
+    .examples {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border);
+    }
+    .ex-label { font-size: 11px; font-weight: 800; color: var(--muted); }
+    .ex-btn {
+      text-align: left;
+      border: 1px solid var(--border);
+      background: #FFFBF6;
+      border-radius: 12px;
+      padding: 8px 12px;
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text);
+      cursor: pointer;
+    }
+    .ex-btn:active { background: var(--accent-soft); }
+
+    /* Parsed chips */
+    .parsed-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .chip {
+      background: #FFF;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 11px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .chip b { color: var(--accent); }
+
+    /* Cute Result Card */
+    .res-card {
+      background: #2A221B;
+      color: #FFF;
+      border-radius: 24px;
+      padding: 20px;
+      margin-bottom: 14px;
+      box-shadow: 0 10px 24px rgba(42, 34, 27, 0.14);
+    }
+    .res-tag {
+      display: inline-block;
+      background: var(--accent);
+      color: #FFF;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+    .res-big {
+      font-size: 25px;
+      font-weight: 900;
+      color: var(--yellow);
+      line-height: 1.3;
+      margin-bottom: 6px;
+    }
+    .res-sub {
+      font-size: 14px;
+      color: #EAE0D6;
+      line-height: 1.5;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .mini {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 13px 14px;
+    }
+    .mini-k { font-size: 11px; font-weight: 700; color: var(--muted); }
+    .mini-v { font-size: 17px; font-weight: 900; margin-top: 4px; }
+    .good { color: var(--green); }
+
+    .table-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 14px 16px;
+    }
+    .table-title { font-size: 13px; font-weight: 800; margin-bottom: 8px; }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 0;
+      border-bottom: 1px solid #F5EDE4;
+      font-size: 13.5px;
+      font-weight: 700;
+    }
+    .row:last-child { border-bottom: none; padding-bottom: 2px; }
+    .row span:last-child { color: var(--green); }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <div class="logo">🍊 대성농산물 계산기</div>
+      <h1>말하듯 적으면 바로 계산!</h1>
+      <p>매입가 · 개수 · 바구니 · 마진%를 편하게 적어보세요</p>
+    </div>
+
+    <div class="box">
+      <textarea id="q" oninput="run()" placeholder="예: 귤 15000원 100개, 5000원 6바구니">귤 15000원 100개, 5000원 6바구니</textarea>
+      <div class="examples">
+        <div class="ex-label">👇 눌러서 바로 테스트</div>
+        <button class="ex-btn" onclick="setEx('귤 15000원 100개, 5000원 6바구니')">🍊 귤 15000원 100개, 5000원 6바구니</button>
+        <button class="ex-btn" onclick="setEx('사과 대과 40000원, 마진 25%')">🍎 사과 대과 40000원, 마진 25%</button>
+        <button class="ex-btn" onclick="setEx('황금향 30000원 60개, 10000원짜리 마진 30%')">🧡 황금향 30000원 60개, 10000원짜리 마진 30%</button>
+      </div>
+    </div>
+
+    <div class="parsed-row" id="chips"></div>
+
+    <div class="res-card">
+      <div class="res-tag" id="resTag">계산 결과</div>
+      <div class="res-big" id="resBig">-</div>
+      <div class="res-sub" id="resSub">-</div>
+    </div>
+
+    <div class="mini-grid" id="miniGrid"></div>
+
+    <div class="table-card">
+      <div class="table-title" id="tableTitle">💡 가격별 추천 조합</div>
+      <div id="tableBody"></div>
+    </div>
+  </div>
+
+  <script>
+    const ITEMS = {
+      '귤': { unit: '개', s: 130, m: 100, l: 75 },
+      '사과': { unit: '개', s: 42, m: 32, l: 24 },
+      '배': { unit: '개', s: 20, m: 15, l: 12 },
+      '단감': { unit: '개', s: 55, m: 42, l: 32 },
+      '익은대봉': { unit: '개', s: 40, m: 32, l: 24 },
+      '대봉': { unit: '개', s: 40, m: 32, l: 24 },
+      '황금향': { unit: '개', s: 75, m: 60, l: 45 },
+      '샤인': { unit: '송이', s: 10, m: 7, l: 5 },
+      '딸기': { unit: '팩', s: 8, m: 4, l: 4 },
+      '연시': { unit: '개', s: 40, m: 30, l: 24 },
+      '키위': { unit: '개', s: 95, m: 75, l: 55 },
+      '토마토': { unit: '개', s: 45, m: 32, l: 22 }
+    };
+
+    function setEx(txt) {
+      document.getElementById('q').value = txt;
+      run();
+    }
+
+    function fmt(n) { return Math.round(n).toLocaleString(); }
+
+    function parseKoreanMoney(str) {
+      // Handle e.g. 15000원, 1.5만원, 3만원
+      const man = str.match(/(\d+(?:\.\d+)?)\s*만\s*원?/);
+      if (man) return Math.round(parseFloat(man[1]) * 10000);
+      return null;
+    }
+
+    function run() {
+      const raw = document.getElementById('q').value.trim();
+
+      // 1. Item & Size
+      let itemName = '과일';
+      let itemInfo = { unit: '개', s: 100, m: 80, l: 60 };
+      for (const k of Object.keys(ITEMS)) {
+        if (raw.includes(k)) { itemName = k; itemInfo = ITEMS[k]; break; }
+      }
+      let sizeKey = 'm';
+      let sizeLabel = '중과';
+      if (/소과|작은|꼬마/.test(raw)) { sizeKey = 's'; sizeLabel = '소과'; }
+      else if (/대과|큰/.test(raw)) { sizeKey = 'l'; sizeLabel = '대과'; }
+
+      // 2. Extract tagged numbers
+      const basketCountMatch = raw.match(/(\d+)\s*(?:바구니|박스|팩|묶음)/);
+      const basketCount = basketCountMatch ? parseInt(basketCountMatch[1]) : null;
+
+      const marginMatch = raw.match(/(\d+(?:\.\d+)?)\s*(?:%|프로|퍼)/);
+      const targetMargin = marginMatch ? parseFloat(marginMatch[1]) : null;
+
+      const countMatch = raw.match(/(\d+)\s*(?:개|알|송이)/);
+      let totalCount = countMatch ? parseInt(countMatch[1]) : itemInfo[sizeKey];
+
+      // Prices: find all "...원" or "...만원"
+      const priceMatches = [...raw.matchAll(/(\d+(?:\.\d+)?\s*만\s*원?|\d[\d,]*\s*원)/g)].map(m => {
+        const s = m[0].replace(/,/g, '');
+        const man = parseKoreanMoney(s);
+        if (man !== null) return man;
+        return parseInt(s.replace(/[^\d]/g, ''));
+      }).filter(n => !isNaN(n) && n > 0);
+
+      const buyPrice = priceMatches[0] || 15000;
+      const basketPrice = priceMatches[1] || null;
+
+      // Chips
+      const chips = [
+        `품목 <b>${itemName}(${sizeLabel})</b>`,
+        `매입가 <b>${fmt(buyPrice)}원</b>`,
+        `총 <b>${totalCount}${itemInfo.unit}</b>`
+      ];
+      if (basketPrice) chips.push(`바구니가 <b>${fmt(basketPrice)}원</b>`);
+      if (basketCount) chips.push(`수량 <b>${basketCount}바구니</b>`);
+      if (targetMargin !== null) chips.push(`목표마진 <b>${targetMargin}%</b>`);
+
+      document.getElementById('chips').innerHTML = chips.map(c => `<div class="chip">${c}</div>`).join('');
+
+      const u = itemInfo.unit;
+      const resTag = document.getElementById('resTag');
+      const resBig = document.getElementById('resBig');
+      const resSub = document.getElementById('resSub');
+      const miniGrid = document.getElementById('miniGrid');
+      const tableTitle = document.getElementById('tableTitle');
+      const tableBody = document.getElementById('tableBody');
+
+      if (basketPrice && basketCount) {
+        // Mode A: Basket split
+        const rev = basketPrice * basketCount;
+        const prof = rev - buyPrice;
+        const margin = (prof / rev) * 100;
+        const per = Math.floor(totalCount / basketCount);
+        const rem = totalCount % basketCount;
+
+        resTag.innerText = '바구니 소분 계산';
+        resBig.innerText = `바구니당 ${per}${u}씩` + (rem > 0 ? ` (여유 ${rem}${u})` : '');
+        resSub.innerText = `${fmt(basketPrice)}원 × ${basketCount}바구니 = 총 매출 ${fmt(rev)}원`;
+
+        miniGrid.innerHTML = `
+          <div class="mini"><div class="mini-k">순이익</div><div class="mini-v good">${prof >= 0 ? '+' : ''}${fmt(prof)}원</div></div>
+          <div class="mini"><div class="mini-k">판매 마진율</div><div class="mini-v good">${margin.toFixed(1)}%</div></div>
+          <div class="mini"><div class="mini-k">1${u}당 매입원가</div><div class="mini-v">${fmt(buyPrice / totalCount)}원</div></div>
+          <div class="mini"><div class="mini-k">바구니당 원가</div><div class="mini-v">${fmt(buyPrice / basketCount)}원</div></div>
+        `;
+      } else {
+        // Mode B: Target Margin Reverse Calculation
+        const m = targetMargin !== null ? Math.min(90, targetMargin) : 25;
+        const bp = basketPrice || 5000;
+        const needRev = buyPrice / (1 - m / 100);
+        const needBaskets = Math.ceil(needRev / bp);
+        const realRev = needBaskets * bp;
+        const realProf = realRev - buyPrice;
+        const realMargin = (realProf / realRev) * 100;
+        const per = Math.floor(totalCount / needBaskets);
+
+        resTag.innerText = `목표 마진 ${m}% 역산`;
+        resBig.innerText = `${fmt(bp)}원 × ${needBaskets}바구니`;
+        resSub.innerText = `바구니당 ${per}${u}씩 담으면 총 ${fmt(realRev)}원 (실제 마진 ${realMargin.toFixed(1)}%)`;
+
+        miniGrid.innerHTML = `
+          <div class="mini"><div class="mini-k">예상 순이익</div><div class="mini-v good">+${fmt(realProf)}원</div></div>
+          <div class="mini"><div class="mini-k">목표 최소 매출</div><div class="mini-v">${fmt(needRev)}원</div></div>
+        `;
+      }
+
+      // Comparison Table
+      const mForTable = targetMargin !== null ? Math.min(90, targetMargin) : 25;
+      const needRevT = buyPrice / (1 - mForTable / 100);
+      tableTitle.innerText = `💡 마진 ${mForTable}% 이상 남기는 가격대별 조합`;
+      const pList = [3000, 4000, 5000, 7000, 10000];
+      tableBody.innerHTML = pList.map(p => {
+        const nb = Math.ceil(needRevT / p);
+        const ec = Math.floor(totalCount / nb);
+        const pf = nb * p - buyPrice;
+        return `<div class="row"><span>${fmt(p)}원 × <b>${nb}바구니</b> (개당 ${ec}${u})</span><span>+${fmt(pf)}원</span></div>`;
+      }).join('');
+    }
+
+    run();
+  </script>
+</body>
+</html>
