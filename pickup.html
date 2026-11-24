@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>📦 과일박스 예약 체크리스트</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #FFF9F2;
+      --card: #FFFFFF;
+      --text: #2A221B;
+      --muted: #84766A;
+      --accent: #FF7A2F;
+      --accent-soft: #FFF0E3;
+      --green: #21884C;
+      --green-soft: #E9F8EE;
+      --blue: #2563EB;
+      --blue-soft: #EFF6FF;
+      --border: #F0E3D5;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #F4EAE0;
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+    }
+    .app {
+      width: 100%;
+      max-width: 430px;
+      min-height: 100vh;
+      background: var(--bg);
+      padding: 18px 16px 60px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .header h1 { margin: 0; font-size: 20px; font-weight: 900; letter-spacing: -0.4px; }
+    .date-badge {
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      padding: 6px 11px;
+      border-radius: 999px;
+    }
+
+    /* Stock Summary */
+    .summary {
+      background: #2A221B;
+      color: #FFF;
+      border-radius: 22px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .sum-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .sum-label { font-size: 12px; color: #D4C8BC; font-weight: 700; }
+    .sum-left { font-size: 26px; font-weight: 900; color: #FFE69A; }
+    .sum-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      text-align: center;
+    }
+    .sum-box {
+      background: rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 8px 4px;
+    }
+    .sum-box small { display: block; font-size: 11px; color: #CBBFB3; }
+    .sum-box b { font-size: 16px; font-weight: 800; }
+    .copy-stock-btn {
+      width: 100%;
+      margin-top: 10px;
+      border: none;
+      background: rgba(255,255,255,0.14);
+      color: #FFF;
+      border-radius: 12px;
+      padding: 9px;
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Form */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 15px;
+      margin-bottom: 14px;
+    }
+    .row-chips {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .chip-btn {
+      border: 1px solid var(--border);
+      background: #FFFBF6;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .chip-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #FFF;
+    }
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr 84px;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    input {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 14.5px;
+      font-weight: 700;
+      background: #FFFDF9;
+      color: var(--text);
+    }
+    .add-btn {
+      width: 100%;
+      border: none;
+      background: var(--accent);
+      color: #FFF;
+      border-radius: 14px;
+      padding: 13px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+
+    /* List */
+    .list-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 10px 4px 8px;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--muted);
+    }
+    .item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 13px 14px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .item.done {
+      opacity: 0.55;
+      background: #F9F5F0;
+    }
+    .check-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      border: 2px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 15px;
+      cursor: pointer;
+      background: #FFF;
+    }
+    .item.done .check-circle {
+      background: var(--green);
+      border-color: var(--green);
+      color: #FFF;
+    }
+    .item-body { flex: 1; min-width: 0; }
+    .item-top {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 3px;
+      flex-wrap: wrap;
+    }
+    .tag {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+    .tag.paid { background: var(--green-soft); color: var(--green); }
+    .tag.kakao { background: #FEF3C7; color: #B45309; }
+    .tag.threads { background: #F3E8FF; color: #7E22CE; }
+    .name {
+      font-size: 15px;
+      font-weight: 800;
+      word-break: break-all;
+    }
+    .item.done .name { text-decoration: line-through; }
+    .meta { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+    .del-btn {
+      border: none;
+      background: transparent;
+      color: #C0B4A8;
+      font-size: 16px;
+      padding: 6px;
+      cursor: pointer;
+    }
+    .clear-btn {
+      border: 1px solid var(--border);
+      background: #FFF;
+      border-radius: 8px;
+      padding: 4px 9px;
+      font-family: inherit;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .empty {
+      text-align: center;
+      padding: 28px 10px;
+      color: var(--muted);
+      font-size: 13.5px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <h1>📦 과일박스 예약 체크</h1>
+      <div class="date-badge" id="todayDate">-</div>
+    </div>
+
+    <div class="summary">
+      <div class="sum-top">
+        <div>
+          <div class="sum-label">오늘 남은 수량 (목표 <span id="goalShow" onclick="changeGoal()" style="text-decoration:underline;cursor:pointer;">50</span>박스)</div>
+          <div class="sum-left" id="leftCount">50박스</div>
+        </div>
+        <button class="clear-btn" style="background:rgba(255,255,255,0.12);color:#FFE69A;border:none;" onclick="changeGoal()">총수량 수정</button>
+      </div>
+      <div class="sum-grid">
+        <div class="sum-box"><small>총 예약</small><b id="totalReserved">0박스</b></div>
+        <div class="sum-box"><small>미수령</small><b id="pendingCount">0박스</b></div>
+        <div class="sum-box"><small>수령 완료</small><b id="doneCount">0박스</b></div>
+      </div>
+      <button class="copy-stock-btn" id="copyBtn" onclick="copyStock()">📢 남은 수량 오픈톡 공지 문구 복사</button>
+    </div>
+
+    <div class="card">
+      <div class="row-chips" id="channelChips">
+        <button class="chip-btn active" onclick="setCh('스레드', this)">스레드</button>
+        <button class="chip-btn" onclick="setCh('카톡', this)">카톡</button>
+        <button class="chip-btn" onclick="setCh('당근', this)">당근</button>
+        <button class="chip-btn" onclick="setCh('전화/방문', this)">전화/방문</button>
+      </div>
+
+      <div class="input-row">
+        <input type="text" id="custId" placeholder="아이디 또는 성함 (예: @why2...)" />
+        <input type="number" id="qty" value="1" min="1" placeholder="박스" />
+      </div>
+
+      <div class="input-row" style="grid-template-columns: 1fr 100px;">
+        <input type="text" id="visitTime" placeholder="방문시간 (예: 2시, 오후)" />
+        <button class="chip-btn" id="payToggle" onclick="togglePay()" style="border-radius:12px;height:42px;">현장결제</button>
+      </div>
+
+      <input type="text" id="memo" placeholder="메모 (선택: 예) 귤 많이, 전화번호 등)" style="margin-bottom:8px;" />
+      <button class="add-btn" onclick="addItem()">+ 예약 추가하기</button>
+    </div>
+
+    <div class="list-head">
+      <span>예약 목록 (<span id="listCnt">0</span>건)</span>
+      <button class="clear-btn" onclick="clearDone()">수령완료 비우기</button>
+    </div>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const KEY = 'daeseong_fruit_box_orders_v1';
+    const GOAL_KEY = 'daeseong_fruit_box_goal_v1';
+
+    let channel = '스레드';
+    let paid = false;
+    let goal = Number(localStorage.getItem(GOAL_KEY)) || 50;
+    let orders = JSON.parse(localStorage.getItem(KEY) || '[]');
+
+    const now = new Date();
+    document.getElementById('todayDate').innerText =
+      `${now.getMonth() + 1}/${now.getDate()} (${['일','월','화','수','목','금','토'][now.getDay()]})`;
+
+    function save() {
+      localStorage.setItem(KEY, JSON.stringify(orders));
+      localStorage.setItem(GOAL_KEY, String(goal));
+    }
+
+    function setCh(c, btn) {
+      channel = c;
+      document.querySelectorAll('#channelChips .chip-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    function togglePay() {
+      paid = !paid;
+      const btn = document.getElementById('payToggle');
+      btn.innerText = paid ? '선입금완료' : '현장결제';
+      btn.style.background = paid ? 'var(--green-soft)' : '#FFFBF6';
+      btn.style.color = paid ? 'var(--green)' : 'var(--muted)';
+      btn.style.borderColor = paid ? 'var(--green)' : 'var(--border)';
+    }
+
+    function changeGoal() {
+      const val = prompt('오늘 총 한정 수량(박스)을 입력하세요:', goal);
+      if (val !== null && !isNaN(Number(val)) && Number(val) > 0) {
+        goal = Math.floor(Number(val));
+        save();
+        render();
+      }
+    }
+
+    function addItem() {
+      const id = document.getElementById('custId').value.trim();
+      const qty = Math.max(1, parseInt(document.getElementById('qty').value) || 1);
+      const time = document.getElementById('visitTime').value.trim() || '시간 미정';
+      const memo = document.getElementById('memo').value.trim();
+      if (!id) { alert('아이디 또는 성함을 입력해 주세요!'); return; }
+
+      orders.unshift({
+        uid: Date.now(),
+        channel,
+        id,
+        qty,
+        time,
+        paid,
+        memo,
+        done: false
+      });
+      document.getElementById('custId').value = '';
+      document.getElementById('qty').value = '1';
+      document.getElementById('visitTime').value = '';
+      document.getElementById('memo').value = '';
+      save();
+      render();
+    }
+
+    function toggleDone(uid) {
+      const o = orders.find(x => x.uid === uid);
+      if (o) o.done = !o.done;
+      save();
+      render();
+    }
+
+    function delItem(uid) {
+      orders = orders.filter(x => x.uid !== uid);
+      save();
+      render();
+    }
+
+    function clearDone() {
+      if (!orders.some(x => x.done)) return;
+      if (confirm('수령 완료된 항목을 목록에서 지울까요?')) {
+        orders = orders.filter(x => !x.done);
+        save();
+        render();
+      }
+    }
+
+    function copyStock() {
+      const totalRes = orders.reduce((s, x) => s + x.qty, 0);
+      const left = Math.max(0, goal - totalRes);
+      const msg = left > 0
+        ? `📢 현재 오늘 7종 모둠과일박스 남은 수량: ${left}박스! (예약 후 방문 부탁드려요 🍊)`
+        : `📢 오늘 7종 모둠과일박스 ${goal}박스 전량 예약 마감되었습니다! 감사합니다 🍊`;
+      navigator.clipboard.writeText(msg).then(() => {
+        const b = document.getElementById('copyBtn');
+        b.innerText = '✅ 복사 완료! 오픈톡에 붙여넣으세요';
+        setTimeout(() => b.innerText = '📢 남은 수량 오픈톡 공지 문구 복사', 2000);
+      });
+    }
+
+    function render() {
+      const totalRes = orders.reduce((s, x) => s + x.qty, 0);
+      const doneQty = orders.filter(x => x.done).reduce((s, x) => s + x.qty, 0);
+      const pendQty = totalRes - doneQty;
+      const left = Math.max(0, goal - totalRes);
+
+      document.getElementById('goalShow').innerText = goal;
+      document.getElementById('leftCount').innerText = `${left}박스`;
+      document.getElementById('totalReserved').innerText = `${totalRes}박스`;
+      document.getElementById('pendingCount').innerText = `${pendQty}박스`;
+      document.getElementById('doneCount').innerText = `${doneQty}박스`;
+      document.getElementById('listCnt').innerText = orders.length;
+
+      const sorted = [...orders].sort((a, b) => Number(a.done) - Number(b.done));
+      const list = document.getElementById('list');
+      if (sorted.length === 0) {
+        list.innerHTML = '<div class="empty">아직 등록된 예약이 없어요.<br>위에서 스레드/카톡 아이디를 추가해 보세요!</div>';
+        return;
+      }
+      list.innerHTML = sorted.map(o => {
+        const chClass = o.channel === '스레드' ? 'threads' : (o.channel === '카톡' ? 'kakao' : '');
+        return `
+          <div class="item ${o.done ? 'done' : ''}">
+            <div class="check-circle" onclick="toggleDone(${o.uid})">${o.done ? '✓' : ''}</div>
+            <div class="item-body" onclick="toggleDone(${o.uid})">
+              <div class="item-top">
+                <span class="tag ${chClass}">${o.channel}</span>
+                <span class="name">${o.id}</span>
+                <span class="tag">${o.qty}박스</span>
+                ${o.paid ? '<span class="tag paid">선입금</span>' : ''}
+              </div>
+              <div class="meta">⏰ ${o.time}${o.memo ? ' · ' + o.memo : ''}</div>
+            </div>
+            <button class="del-btn" onclick="delItem(${o.uid})">✕</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    render();
+  </script>
+</body>
+</html>
