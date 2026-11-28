@@ -1,4 +1,4 @@
-const CACHE = 'wnm-orders-v2';
+const CACHE = 'wnm-orders-v3';
 const ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-180.png'];
 
 self.addEventListener('install', (e) => {
