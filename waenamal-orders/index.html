@@ -942,6 +942,14 @@ function stripSpeaker(line){
   if(m&&!/\d/.test(m[1])&&!LABEL_WORDS.test(m[1].replace(/\s+/g,' ').trim()))return {who:m[1].trim(),time:m[2].trim(),text:m[3]};
   m=s.match(/^\d{4}년\s*\d{1,2}월\s*\d{1,2}일[^,]{0,24},\s*([^:：]{1,30}?)\s*[:：]\s*([\s\S]*)$/);
   if(m)return {who:m[1].trim(),time:'',text:m[2]};
+  /* 대괄호·시간 없이 '닉네임 : 내용' 만 붙는 형식 (값이 있는 줄만) */
+  m=s.match(/^([^\[\]:：]{1,24}?)[ \t]*[:：][ \t]*(\S[\s\S]*)$/);
+  if(m){
+    var raw=m[1].trim();
+    var nm=raw.replace(/\([^)]*\)/g,'').replace(/\s+/g,' ').trim();
+    if(nm&&!/^[•·*‣◦\-–—\d]/.test(nm)&&!/\d/.test(nm)&&!/^(https?|www)$/i.test(nm)
+      &&!/^(오전|오후|AM|PM)$/i.test(nm)&&!LABEL_WORDS.test(nm))return {who:raw,time:'',text:m[2]};
+  }
   return {who:'',time:'',text:s};
 }
 /* 줄 단위가 아니라 '메시지' 단위로 묶는다 — 판매자 멘트의 둘째 줄부터가
