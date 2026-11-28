@@ -210,7 +210,7 @@ textarea.paste:focus{border-color:#F4B48B;box-shadow:0 0 0 3px var(--orange-soft
 .ph-group{margin-bottom:16px}
 .ph-gtitle{font-size:12.5px;font-weight:800;color:var(--muted);letter-spacing:.02em;margin:0 0 8px 2px;display:flex;align-items:center;gap:6px}
 .ph-gtitle em{font-style:normal;font-weight:700;color:#B3A79A}
-.ph-grid{display:grid;grid-template-columns:1fr;gap:10px}
+.ph-grid{display:grid;grid-template-columns:1fr;gap:10px;align-items:start}
 @media(min-width:861px){.ph-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}
 .ph-card{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:13px 14px;display:flex;flex-direction:column;gap:8px}
 .ph-top{display:flex;align-items:flex-start;gap:8px;justify-content:space-between}
@@ -218,7 +218,7 @@ textarea.paste:focus{border-color:#F4B48B;box-shadow:0 0 0 3px var(--orange-soft
 .ph-cat{flex:0 0 auto;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:800;background:var(--orange-soft);color:var(--orange-d);white-space:nowrap}
 .ph-body{white-space:pre-wrap;word-break:break-word;font-size:13px;line-height:1.62;color:var(--ink2);background:#FDFBF8;border:1px solid #F3EDE4;border-radius:11px;padding:10px 11px;max-height:9.9em;overflow:hidden;position:relative;cursor:pointer}
 .ph-card.open .ph-body{max-height:none}
-.ph-card:not(.open).has-more .ph-body::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2.6em;background:linear-gradient(rgba(253,251,248,0),#FDFBF8 78%);border-radius:0 0 11px 11px;pointer-events:none}
+.ph-card:not(.open).has-more .ph-body::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3em;background:linear-gradient(rgba(253,251,248,0),#FDFBF8 70%);border-radius:0 0 11px 11px;pointer-events:none}
 .ph-more{align-self:flex-start;font-size:12px;font-weight:800;color:var(--orange-d);padding:0 2px;display:none}
 .ph-card.has-more .ph-more{display:block}
 .ph-foot{display:flex;gap:6px;justify-content:flex-end;align-items:center;margin-top:auto}
